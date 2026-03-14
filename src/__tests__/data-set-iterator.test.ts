@@ -35,7 +35,8 @@ describe('DataSetIterator', () => {
       };
       
       // Mock the JusticeScraper constructor to return our mock instance
-      (JusticeScraper as jest.Mock<typeof JusticeScraper>).mockImplementation(() => mockScraperInstance);
+      // Using any to avoid TypeScript issues with mocking
+      (JusticeScraper as any).mockImplementation(() => mockScraperInstance);
       
       const result = await iterator.iterateDataSetPages(1);
       
@@ -60,7 +61,7 @@ describe('DataSetIterator', () => {
       };
       
       // Mock the JusticeScraper constructor to return our mock instance
-      (JusticeScraper as jest.Mock<typeof JusticeScraper>).mockImplementation(() => mockScraperInstance);
+      (JusticeScraper as any).mockImplementation(() => mockScraperInstance);
       
       const result = await iterator.iterateDataSetPages(1);
       
@@ -81,7 +82,7 @@ describe('DataSetIterator', () => {
       };
       
       // Mock the JusticeScraper constructor to return our mock instance
-      (JusticeScraper as jest.Mock<typeof JusticeScraper>).mockImplementation(() => mockScraperInstance);
+      (JusticeScraper as any).mockImplementation(() => mockScraperInstance);
       
       // Set a low limit for testing
       iterator['maxPagesPerSet'] = 2;
@@ -110,7 +111,7 @@ describe('DataSetIterator', () => {
       };
       
       // Mock the JusticeScraper constructor to return our mock instance
-      (JusticeScraper as jest.Mock<typeof JusticeScraper>).mockImplementation(() => mockScraperInstance);
+      (JusticeScraper as any).mockImplementation(() => mockScraperInstance);
       
       const results = await iterator.iterateDataSets(1, 2);
       

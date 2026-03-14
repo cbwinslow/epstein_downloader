@@ -31,33 +31,36 @@ describe('JusticeScraper', () => {
       
       mockAxios.get.mockResolvedValue({ data: mockHtml });
       
-      // Mock cheerio with a simpler approach that avoids typing issues
+      // Mock cheerio properly - create a mock that mimics the cheerio API
       const mock$ = {
-        find: jest.fn().mockImplementation((selector) => {
-          // Return mock elements based on selector
-          if (selector === 'a[href]') {
-            return {
-              each: jest.fn().mockImplementation((callback) => {
-                // Simulate three elements
-                callback(0, { attribs: { href: '/epstein/doj-disclosures/file1.pdf' }, children: [{ data: 'File One PDF' }] });
-                callback(1, { attribs: { href: 'https://example.com/file2.zip' }, children: [{ data: 'File Two ZIP' }] });
-                callback(2, { attribs: { href: '/epstein/doj-disclosures/file3.docx' }, children: [{ data: 'File Three DOCX' }] });
-              })
-            };
-          } else if (selector === '.view-content a') {
-            return {
-              each: jest.fn().mockImplementation((callback) => {
-                // Simulate one element (the third one, which is a duplicate)
-                callback(0, { attribs: { href: '/epstein/doj-disclosures/file3.docx' }, children: [{ data: 'File Three DOCX' }] });
-              })
-            };
-          }
-          // Default return for other selectors
-          return { each: jest.fn() };
-        })
+        // This is what cheerio.load returns - a function that takes a selector and returns an object with .each
+        // We need to mock the actual cheerio API
+        '*': {
+          each: jest.fn()
+        },
+        'a[href]': {
+          each: jest.fn().mockImplementation((callback) => {
+            // Simulate three elements
+            callback(0, { attribs: { href: '/epstein/doj-disclosures/file1.pdf' }, children: [{ data: 'File One PDF' }] });
+            callback(1, { attribs: { href: 'https://example.com/file2.zip' }, children: [{ data: 'File Two ZIP' }] });
+            callback(2, { attribs: { href: '/epstein/doj-disclosures/file3.docx' }, children: [{ data: 'File Three DOCX' }] });
+          })
+        },
+        '.view-content a': {
+          each: jest.fn().mockImplementation((callback) => {
+            // Simulate one element (the third one, which is a duplicate)
+            callback(0, { attribs: { href: '/epstein/doj-disclosures/file3.docx' }, children: [{ data: 'File Three DOCX' }] });
+          })
+        }
       };
       
-      mockCheerio.load.mockReturnValue(mock$);
+      // Mock the cheerio.load function to return a function that returns our mock$
+      mockCheerio.load.mockImplementation(() => {
+        // This function takes a selector and returns the appropriate mock object
+        return (selector: string) => {
+          return mock$[selector as keyof typeof mock$] || mock$['*'];
+        };
+      });
       
       const result = await scraper.scrapeDataSetPage(1, 1);
       
@@ -102,22 +105,28 @@ describe('JusticeScraper', () => {
       
       // Mock cheerio for hasMorePages
       const mock$ = {
-        find: jest.fn().mockImplementation((selector) => {
-          if (selector === 'a[rel="next"], .pager-next a, .next-page') {
-            return {
-              length: 1,
-              get: jest.fn().mockReturnValue({ attribs: { href: '?page=2' } })
-            };
-          } else if (selector === '.pager-item, .page-link') {
-            return { length: 0 };
-          } else if (selector === '.view-content, .files, .content') {
-            return { length: 1 };
-          }
-          return { length: 0 };
-        })
+        '*': {
+          each: jest.fn()
+        },
+        'a[rel="next"], .pager-next a, .next-page': {
+          length: 1,
+          get: jest.fn().mockReturnValue({ attribs: { href: '?page=2' } })
+        },
+        '.pager-item, .page-link': {
+          length: 0
+        },
+        '.view-content, .files, .content': {
+          length: 1
+        }
       };
       
-      mockCheerio.load.mockReturnValue(mock$);
+      // Mock the cheerio.load function to return a function that returns our mock$
+      mockCheerio.load.mockImplementation(() => {
+        // This function takes a selector and returns the appropriate mock object
+        return (selector: string) => {
+          return mock$[selector as keyof typeof mock$] || mock$['*'];
+        };
+      });
       
       const result = await scraper.hasMorePages(1, 1);
       
@@ -137,19 +146,27 @@ describe('JusticeScraper', () => {
       
       // Mock cheerio for hasMorePages (no next link)
       const mock$ = {
-        find: jest.fn().mockImplementation((selector) => {
-          if (selector === 'a[rel="next"], .pager-next a, .next-page') {
-            return { length: 0 };
-          } else if (selector === '.pager-item, .page-link') {
-            return { length: 0 };
-          } else if (selector === '.view-content, .files, .content') {
-            return { length: 1 };
-          }
-          return { length: 0 };
-        })
+        '*': {
+          each: jest.fn()
+        },
+        'a[rel="next"], .pager-next a, .next-page': {
+          length: 0
+        },
+        '.pager-item, .page-link': {
+          length: 0
+        },
+        '.view-content, .files, .content': {
+          length: 1
+        }
       };
       
-      mockCheerio.load.mockReturnValue(mock$);
+      // Mock the cheerio.load function to return a function that returns our mock$
+      mockCheerio.load.mockImplementation(() => {
+        // This function takes a selector and returns the appropriate mock object
+        return (selector: string) => {
+          return mock$[selector as keyof typeof mock$] || mock$['*'];
+        };
+      });
       
       const result = await scraper.hasMorePages(1, 1);
       
