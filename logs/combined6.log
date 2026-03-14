@@ -1,0 +1,7 @@
+{"level":"info","message":"Loaded 5 items from state file"}
+{"level":"info","message":"Downloader initialized"}
+{"level":"info","message":"Initializing downloader..."}
+{"level":"info","message":"Loaded 5 items from state file"}
+{"level":"info","message":"Downloader initialized"}
+{"level":"info","message":"File saved successfully: ./download-state.json (1592 bytes)"}
+{"level":"info","message":"Added download to queue: http://example.com/file.pdf"}

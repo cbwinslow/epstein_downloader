@@ -11,5 +11,6 @@ module.exports = {
     '^@config/(.*)$': '<rootDir>/src/config/$1',
     '^@agents/(.*)$': '<rootDir>/src/agents/$1',
     '^@downloader/(.*)$': '<rootDir>/src/downloader/$1',
+    '^@scraper/(.*)$': '<rootDir>/src/scraper/$1',
   },
 };

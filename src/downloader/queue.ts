@@ -1,6 +1,7 @@
 import { DownloadItem, DownloadStatus } from './types';
 import { Logger } from '@utils/logger';
 import { FileSystemManager } from '@utils/file-system';
+import { StorageManager, StorageType } from '@utils/storage-manager';
 
 /**
  * Manages the download queue and persistence
@@ -9,10 +10,17 @@ export class DownloadQueue {
   private queue: DownloadItem[] = [];
   private readonly stateFilePath: string;
   private readonly fileSystemManager: FileSystemManager;
+  private readonly storageManager: StorageManager;
   private readonly logger: Logger;
 
   constructor() {
     this.fileSystemManager = new FileSystemManager();
+    // Initialize storage manager with default local storage
+    const storageConfig = {
+      type: StorageType.LOCAL,
+      basePath: './downloads'
+    };
+    this.storageManager = new StorageManager(storageConfig);
     this.logger = Logger.getInstance();
     // State file path will be set during initialization
     this.stateFilePath = './download-state.json';
@@ -66,7 +74,7 @@ export class DownloadQueue {
    */
   public async loadState(): Promise<void> {
     try {
-      const stateData = await this.fileSystemManager.readFile(this.stateFilePath);
+      const stateData = await this.storageManager.readFile(this.stateFilePath);
       if (stateData) {
         this.queue = JSON.parse(stateData);
         // Convert string dates back to Date objects
@@ -97,7 +105,7 @@ export class DownloadQueue {
         endTime: item.endTime ? item.endTime.toISOString() : null
       }));
       
-      await this.fileSystemManager.writeFile(this.stateFilePath, JSON.stringify(serializableQueue, null, 2));
+      await this.storageManager.writeFile(this.stateFilePath, JSON.stringify(serializableQueue, null, 2));
       this.logger.debug('Saved queue state to file');
     } catch (error) {
       this.logger.error('Failed to save queue state:', error as Error);

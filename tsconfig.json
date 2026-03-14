@@ -24,7 +24,8 @@
       "@utils/*": ["src/utils/*"],
       "@config/*": ["src/config/*"],
       "@agents/*": ["src/agents/*"],
-      "@downloader/*": ["src/downloader/*"]
+      "@downloader/*": ["src/downloader/*"],
+      "@scraper/*": ["src/scraper/*"]
     }
   },
   "include": [

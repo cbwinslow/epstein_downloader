@@ -18,6 +18,7 @@ export class Downloader {
   private downloadQueue: DownloadQueue;
   private fileSystemManager: FileSystemManager;
   private isRunning: boolean = false;
+  private isPaused: boolean = false;
   private maxThreads: number;
 
   constructor() {
@@ -62,6 +63,7 @@ export class Downloader {
 
     this.logger.info('Starting downloader...');
     this.isRunning = true;
+    this.isPaused = false;
 
     // Validate connection and cookies before starting
     const connectionValid = await this.connectionValidator.validate();
@@ -95,6 +97,42 @@ export class Downloader {
   }
 
   /**
+   * Pause the download process
+   */
+  public async pause(): Promise<void> {
+    if (!this.isRunning) {
+      this.logger.warn('Downloader is not running');
+      return;
+    }
+
+    if (this.isPaused) {
+      this.logger.warn('Downloader is already paused');
+      return;
+    }
+
+    this.logger.info('Pausing downloader...');
+    this.isPaused = true;
+  }
+
+  /**
+   * Resume the download process
+   */
+  public async resume(): Promise<void> {
+    if (!this.isRunning) {
+      this.logger.warn('Downloader is not running');
+      return;
+    }
+
+    if (!this.isPaused) {
+      this.logger.warn('Downloader is not paused');
+      return;
+    }
+
+    this.logger.info('Resuming downloader...');
+    this.isPaused = false;
+  }
+
+  /**
    * Stop the download process
    */
   public async stop(): Promise<void> {
@@ -105,6 +143,7 @@ export class Downloader {
 
     this.logger.info('Stopping downloader...');
     this.isRunning = false;
+    this.isPaused = false;
     // The workers will check isRunning and exit gracefully
   }
 
@@ -115,6 +154,12 @@ export class Downloader {
     this.logger.info(`Worker ${workerId} started`);
 
     while (this.isRunning) {
+      // Check if paused
+      if (this.isPaused) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        continue;
+      }
+
       try {
         // Get next item from queue
         const item = await this.downloadQueue.nextItem();
