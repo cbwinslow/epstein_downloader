@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Downloader = void 0;
 const types_1 = require("./types");
@@ -8,6 +11,7 @@ const connection_validator_1 = require("../agents/connection-validator");
 const cookie_manager_1 = require("../agents/cookie-manager");
 const queue_1 = require("./queue");
 const file_system_1 = require("../utils/file-system");
+const axios_1 = __importDefault(require("axios"));
 /**
  * Core downloader class that manages the download process
  */
@@ -162,25 +166,32 @@ class Downloader {
      * Perform the actual file download
      */
     async downloadFile(item) {
-        // This is a placeholder - actual implementation would use axios, node-fetch, or similar
-        // For now, we'll simulate a download
         try {
-            // In a real implementation, this would:
-            // 1. Make HTTP request with cookies
-            // 2. Stream response to file
-            // 3. Handle progress updates
-            // 4. Validate download
-            // Simulate download time based on file size
-            const downloadTimeMs = Math.min(item.size || 1000000, 10000000) / 10000; // Rough simulation
-            await new Promise(resolve => setTimeout(resolve, downloadTimeMs));
-            // Simulate occasional failures for testing
-            if (Math.random() < 0.1) { // 10% failure rate
-                throw new Error('Simulated download failure');
+            // Get cookies from cookie manager
+            const cookies = this.cookieManager.getCookies();
+            // Prepare headers with cookies if available
+            const headers = {};
+            if (cookies) {
+                headers.Cookie = cookies;
             }
+            // Make HTTP request with axios
+            const response = await (0, axios_1.default)({
+                method: 'get',
+                url: item.url,
+                headers: headers,
+                responseType: 'stream',
+                timeout: this.configManager.getNumber('downloader.timeout', 30000)
+            });
             // Create the file path
             const filePath = `${this.configManager.getString('storage.downloadDirectory')}/${item.filename}`;
-            // In real implementation, we would write the file here
-            await this.fileSystemManager.createFile(filePath, `Simulated content for ${item.filename}`);
+            // Write response stream to file
+            const writer = this.fileSystemManager.createWriteStream(filePath);
+            response.data.pipe(writer);
+            // Wait for the stream to finish
+            await new Promise((resolve, reject) => {
+                writer.on('finish', resolve);
+                writer.on('error', reject);
+            });
             return true;
         }
         catch (error) {
