@@ -1,0 +1,33 @@
+# DOJ Website Authentication
+# After logging into the DOJ website manually, copy your cookies here
+DOJ_COOKIES=your_cookie_string_here
+
+# Downloader Configuration
+MAX_THREADS=4
+TIMEOUT=30000
+RETRY_ATTEMPTS=3
+RETRY_DELAY=1000
+
+# Storage Settings
+DOWNLOAD_DIRECTORY=./downloads
+LOG_DIRECTORY=./logs
+STATE_FILE=./download-state.json
+MAX_DISK_USAGE=0.9
+
+# Validation Settings
+CHECK_CONNECTION_INTERVAL=60000
+COOKIE_VALIDATION_ENABLED=true
+SERVER_HEALTH_CHECK_ENABLED=true
+DISK_SPACE_CHECK_ENABLED=true
+
+# Logging Settings
+LOG_LEVEL=info
+LOG_FORMAT=json
+LOG_MAX_SIZE=10m
+LOG_MAX_FILES=5
+
+# AI Agent Settings
+AI_AGENT_ENABLED=true
+AI_AGENT_MODEL=openrouter/auto
+AI_AGENT_TEMPERATURE=0.1
+AI_AGENT_MAX_TOKENS=1000

@@ -1,0 +1,45 @@
+{
+  "name": "epstein-downloader",
+  "version": "1.0.0",
+  "description": "A modular, multi-threaded file downloader designed to automate the download of Epstein files from various sources, initially targeting the DOJ website. This tool is built with extensibility in mind, allowing integration with AI agents for validation, monitoring, and workflow management.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/**/*.ts",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "downloader",
+    "multithreaded",
+    "epstein",
+    "doj",
+    "ai-agent",
+    "scraper"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/jest": "^28.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^8.0.0",
+    "jest": "^28.0.0",
+    "prettier": "^2.0.0",
+    "ts-jest": "^28.0.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.0.0"
+  }
+}

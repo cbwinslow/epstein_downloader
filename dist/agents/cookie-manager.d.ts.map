@@ -1,0 +1,1 @@
+{"version":3,"file":"cookie-manager.d.ts","sourceRoot":"","sources":["../../src/agents/cookie-manager.ts"],"names":[],"mappings":"AAIA;;GAEG;AACH,qBAAa,aAAa;IACxB,OAAO,CAAC,MAAM,CAAS;IACvB,OAAO,CAAC,aAAa,CAAgB;IACrC,OAAO,CAAC,OAAO,CAAU;;IAQzB;;OAEG;IACU,QAAQ,IAAI,OAAO,CAAC,OAAO,CAAC;IAmCzC;;OAEG;IACH,OAAO,CAAC,mBAAmB;IAS3B;;OAEG;IACI,UAAU,IAAI,MAAM;CAG5B"}
