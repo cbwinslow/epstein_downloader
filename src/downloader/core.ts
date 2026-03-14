@@ -1,10 +1,10 @@
 import { DownloadItem, DownloadStatus } from './types';
-import { ConfigManager } from '../config/manager';
-import { Logger } from '../utils/logger';
-import { ConnectionValidator } from '../agents/connection-validator';
-import { CookieManager } from '../agents/cookie-manager';
+import { ConfigManager } from '@config/manager';
+import { Logger } from '@utils/logger';
+import { ConnectionValidator } from '@agents/connection-validator';
+import { CookieManager } from '@agents/cookie-manager';
 import { DownloadQueue } from './queue';
-import { FileSystemManager } from '../utils/file-system';
+import { FileSystemManager } from '@utils/file-system';
 import axios from 'axios';
 
 /**

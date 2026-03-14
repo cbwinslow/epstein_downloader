@@ -1,9 +1,15 @@
-import { Logger } from '../../utils/logger';
-import { ConfigManager } from '../../config/manager';
+import { Logger } from '@utils/logger';
+import { ConfigManager } from '@config/manager';
 
 /**
  * AI Agent for validation and monitoring tasks
- * In a real implementation, this would interface with OpenRouter or similar AI service
+ * 
+ * NOTE: This is currently a placeholder implementation that simulates AI responses.
+ * In a production implementation, this would interface with an actual AI service 
+ * (such as OpenRouter) to perform intelligent validation and analysis.
+ * 
+ * To complete the implementation, replace the simulated responses with actual 
+ * API calls to your chosen AI service provider.
  */
 export class AIAgent {
   private logger: Logger;

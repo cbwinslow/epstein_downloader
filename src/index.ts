@@ -1,4 +1,4 @@
-import { Downloader } from './downloader/core';
+import { Downloader } from '@downloader/core';
 
 /**
  * Main entry point for the Epstein Files Downloader

@@ -18,7 +18,14 @@
     "noImplicitThis": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@utils/*": ["src/utils/*"],
+      "@config/*": ["src/config/*"],
+      "@agents/*": ["src/agents/*"],
+      "@downloader/*": ["src/downloader/*"]
+    }
   },
   "include": [
     "src/**/*"

@@ -1,18 +1,24 @@
 import { createLogger, format, transports } from 'winston';
-import { ConfigManager } from '../config/manager';
+import { ConfigManager } from '@config/manager';
 
 /**
  * Singleton logger instance for the application
  */
 export class Logger {
-  private static instance: Logger;
-  private logger: any;
-  private configManager: ConfigManager;
+   private static instance: Logger;
+   private logger: any;
+   private configManager: ConfigManager | null = null;
 
-  private constructor() {
-    this.configManager = new ConfigManager();
-    this.logger = this.createLogger();
-  }
+   private constructor() {
+     this.logger = this.createLogger();
+   }
+
+   /**
+    * Set the ConfigManager instance to avoid circular dependency during initialization
+    */
+   public setConfigManager(configManager: ConfigManager): void {
+     this.configManager = configManager;
+   }
 
   /**
    * Get the singleton logger instance
@@ -28,10 +34,19 @@ export class Logger {
    * Create and configure the winston logger
    */
   private createLogger(): any {
-    const logLevel = this.configManager.getString('logging.level', 'info');
-    const logFormat = this.configManager.getString('logging.format', 'json');
-    const maxSize = this.configManager.getString('logging.maxSize', '10m');
-    const maxFiles = this.configManager.getNumber('logging.maxFiles', 5);
+    // Use default values if configManager is not available to avoid circular dependency
+    let logLevel = 'info';
+    let logFormat = 'json';
+    let maxSize = '10m';
+    let maxFiles = 5;
+    
+    // Try to get config values if configManager is available
+    if (this.configManager) {
+      logLevel = this.configManager.getString('logging.level', 'info');
+      logFormat = this.configManager.getString('logging.format', 'json');
+      maxSize = this.configManager.getString('logging.maxSize', '10m');
+      maxFiles = this.configManager.getNumber('logging.maxFiles', 5);
+    }
 
     const formatOptions = logFormat === 'json' 
       ? format.json() 

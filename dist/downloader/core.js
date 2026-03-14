@@ -5,12 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Downloader = void 0;
 const types_1 = require("./types");
-const manager_1 = require("../config/manager");
-const logger_1 = require("../utils/logger");
-const connection_validator_1 = require("../agents/connection-validator");
-const cookie_manager_1 = require("../agents/cookie-manager");
+const manager_1 = require("@config/manager");
+const logger_1 = require("@utils/logger");
+const connection_validator_1 = require("@agents/connection-validator");
+const cookie_manager_1 = require("@agents/cookie-manager");
 const queue_1 = require("./queue");
-const file_system_1 = require("../utils/file-system");
+const file_system_1 = require("@utils/file-system");
 const axios_1 = __importDefault(require("axios"));
 /**
  * Core downloader class that manages the download process

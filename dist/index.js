@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("./downloader/core");
+const core_1 = require("@downloader/core");
 /**
  * Main entry point for the Epstein Files Downloader
  */

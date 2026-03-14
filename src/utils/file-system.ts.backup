@@ -1,16 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Logger } from './logger';
 
 /**
  * File system utility functions
  */
 export class FileSystemManager {
-  private logger: Logger;
-
-  constructor() {
-    this.logger = Logger.getInstance();
-  }
   /**
    * Ensure that directories exist, creating them if necessary
    */
@@ -29,7 +23,7 @@ export class FileSystemManager {
     } catch (error) {
       // If directory already exists, that's fine
       if ((error as NodeJS.ErrnoException).code !== 'EEXIST') {
-        throw new Error(`Unable to ensure directory exists ${dirPath}: ${(error as Error).message}`);
+        throw error;
       }
     }
   }
@@ -57,11 +51,7 @@ export class FileSystemManager {
     const dirPath = path.dirname(filePath);
     await this.ensureDirectory(dirPath);
     
-    try {
-      await fs.promises.writeFile(filePath, content, 'utf8');
-    } catch (error) {
-      throw new Error(`Unable to write file ${filePath}: ${(error as Error).message}`);
-    }
+    await fs.promises.writeFile(filePath, content, 'utf8');
   }
 
   /**
@@ -138,9 +128,8 @@ export class FileSystemManager {
   public createWriteStream(filePath: string) {
     // Ensure directory exists
     const dirPath = path.dirname(filePath);
-    this.ensureDirectory(dirPath).catch(error => {
-      // Log the error but still create the stream - it will fail when used if directory creation failed
-      this.logger.warn(`Failed to ensure directory exists for ${filePath}: ${error.message}`);
+    this.ensureDirectory(dirPath).catch(() => {
+      // If we can't create the directory, let the stream creation fail naturally
     });
     return fs.createWriteStream(filePath);
   }

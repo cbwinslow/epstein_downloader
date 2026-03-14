@@ -4,6 +4,8 @@ import * as fs from 'fs';
  * File system utility functions
  */
 export declare class FileSystemManager {
+    private logger;
+    constructor();
     /**
      * Ensure that directories exist, creating them if necessary
      */

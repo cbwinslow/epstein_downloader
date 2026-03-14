@@ -33,6 +33,7 @@ const logger_1 = require("@utils/logger");
 class ConfigManager {
     constructor() {
         this.config = {};
+        // Initialize logger lazily to avoid circular dependency
         this.logger = logger_1.Logger.getInstance();
         this.envVars = process.env;
         this.loadConfiguration();

@@ -1,9 +1,26 @@
-import { Downloader } from '../downloader/core';
+import { Downloader } from '@downloader/core';
+import { ConfigManager } from '@config/manager';
+
+// Mock the config manager to avoid missing DOJ_COOKIES error
+jest.mock('@config/manager', () => {
+  return {
+    ConfigManager: jest.fn().mockImplementation(() => {
+      return {
+        getString: jest.fn().mockReturnValue('test-value'),
+        getNumber: jest.fn().mockReturnValue(4),
+        getBoolean: jest.fn().mockReturnValue(true),
+        validate: jest.fn().mockResolvedValue(undefined),
+      };
+    }),
+  };
+});
 
 describe('Downloader', () => {
   let downloader: Downloader;
+  let configManager: jest.Mocked<ConfigManager>;
 
   beforeEach(() => {
+    configManager = new ConfigManager() as jest.Mocked<ConfigManager>;
     downloader = new Downloader();
   });
 

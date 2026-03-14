@@ -2,13 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger = void 0;
 const winston_1 = require("winston");
-const manager_1 = require("../config/manager");
 /**
  * Singleton logger instance for the application
  */
 class Logger {
     constructor() {
-        this.configManager = new manager_1.ConfigManager();
+        this.configManager = null;
         this.logger = this.createLogger();
     }
     /**
@@ -24,10 +23,18 @@ class Logger {
      * Create and configure the winston logger
      */
     createLogger() {
-        const logLevel = this.configManager.getString('logging.level', 'info');
-        const logFormat = this.configManager.getString('logging.format', 'json');
-        const maxSize = this.configManager.getString('logging.maxSize', '10m');
-        const maxFiles = this.configManager.getNumber('logging.maxFiles', 5);
+        // Use default values if configManager is not available to avoid circular dependency
+        let logLevel = 'info';
+        let logFormat = 'json';
+        let maxSize = '10m';
+        let maxFiles = 5;
+        // Try to get config values if configManager is available
+        if (this.configManager) {
+            logLevel = this.configManager.getString('logging.level', 'info');
+            logFormat = this.configManager.getString('logging.format', 'json');
+            maxSize = this.configManager.getString('logging.maxSize', '10m');
+            maxFiles = this.configManager.getNumber('logging.maxFiles', 5);
+        }
         const formatOptions = logFormat === 'json'
             ? winston_1.format.json()
             : winston_1.format.combine(winston_1.format.colorize(), winston_1.format.simple());

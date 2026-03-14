@@ -11,7 +11,10 @@ export class ConfigManager {
   private envVars: NodeJS.ProcessEnv;
 
   constructor() {
+    // Initialize logger lazily to avoid circular dependency
     this.logger = Logger.getInstance();
+    // Give the logger access to this config manager instance
+    this.logger.setConfigManager(this);
     this.envVars = process.env;
     this.loadConfiguration();
   }
