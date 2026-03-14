@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOJ Cookie Input - Epstein Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md space-y-8">
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                DOJ Cookie Configuration
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Configure your DOJ website cookies for the Epstein Downloader
+            </p>
+        </div>
+        <form class="mt-8 space-y-6" id="cookieForm">
+            <div class="rounded-md shadow-sm -space-y-px">
+                <div>
+                    <label for="ak_bmsc" class="sr-only">AK_BMSC Cookie</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-key text-gray-400"></i>
+                        </div>
+                        <input id="ak_bmsc" name="ak_bmsc" type="text" autocomplete="ak_bmsc" required
+                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                            placeholder="Enter the ak_bmsc cookie value (long string starting with 84E1F295...)"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <button type="button"
+                        class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        id="saveCookiesBtn">
+                    Save Cookies
+                </button>
+            </div>
+        </form>
+
+        <div class="text-center">
+            <p class="text-sm text-gray-500">
+                <i class="fas fa-info-circle mr-2"></i>
+                Need help? See instructions below
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-10 max-w-md space-y-6">
+        <div class="border-t pt-6">
+            <h3 class="text-lg font-medium text-gray-900">
+                How to Get Your DOJ Cookies
+            </h3>
+            <ol class="mt-4 space-y-4 text-sm text-gray-600 list-decimal list-inside">
+                <li>
+                    Visit https://www.justice.gov/epstein/doj-disclosures in your browser
+                </li>
+                <li>
+                    Click "Are you over 18" to pass the age verification
+                </li>
+                <li>
+                    Press F12 to open Developer Tools
+                </li>
+                <li>
+                    Go to the Application tab → Cookies → https://www.justice.gov
+                </li>
+                <li>
+                    Find the "ak_bmsc" cookie and copy its entire value
+                </li>
+                <li>
+                    Paste the ak_bmsc value into the form above and click "Save Cookies"
+                </li>
+                <li>
+                    The justiceGovAgeVerified cookie will be automatically set to "true"
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('saveCookiesBtn').addEventListener('click', async () => {
+            const ak_bmscInput = document.getElementById('ak_bmsc');
+            const ak_bmsc = ak_bmscInput.value.trim();
+            
+            // Basic validation - ak_bmsc should be a long string
+            if (!ak_bmsc) {
+                alert('Please enter the ak_bmsc cookie value');
+                return;
+            }
+            
+            if (ak_bmsc.length < 10) {
+                alert('The ak_bmsc cookie value seems too short. Please check and try again.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/save-cookies', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ak_bmsc })
+                });
+                
+                if (response.ok) {
+                    alert('Cookies saved successfully! You can now use the downloader.');
+                    ak_bmscInput.value = '';
+                } else {
+                    const errorData = await response.json();
+                    alert('Error saving cookies: ' + (errorData.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error saving cookies: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

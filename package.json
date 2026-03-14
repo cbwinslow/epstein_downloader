@@ -27,11 +27,18 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/typography": "^0.5.19",
+    "axios": "^1.13.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "tailwindcss": "^4.2.1",
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "@types/node": "^18.0.0",
     "@types/jest": "^28.0.0",
+    "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.0",

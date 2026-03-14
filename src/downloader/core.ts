@@ -5,6 +5,7 @@ import { ConnectionValidator } from '../agents/connection-validator';
 import { CookieManager } from '../agents/cookie-manager';
 import { DownloadQueue } from './queue';
 import { FileSystemManager } from '../utils/file-system';
+import axios from 'axios';
 
 /**
  * Core downloader class that manages the download process
@@ -189,30 +190,37 @@ export class Downloader {
    * Perform the actual file download
    */
   private async downloadFile(item: DownloadItem): Promise<boolean> {
-    // This is a placeholder - actual implementation would use axios, node-fetch, or similar
-    // For now, we'll simulate a download
-    
     try {
-      // In a real implementation, this would:
-      // 1. Make HTTP request with cookies
-      // 2. Stream response to file
-      // 3. Handle progress updates
-      // 4. Validate download
+      // Get cookies from cookie manager
+      const cookies = this.cookieManager.getCookies();
       
-      // Simulate download time based on file size
-      const downloadTimeMs = Math.min(item.size || 1000000, 10000000) / 10000; // Rough simulation
-      await new Promise(resolve => setTimeout(resolve, downloadTimeMs));
-      
-      // Simulate occasional failures for testing
-      if (Math.random() < 0.1) { // 10% failure rate
-        throw new Error('Simulated download failure');
+      // Prepare headers with cookies if available
+      const headers: any = {};
+      if (cookies) {
+        headers.Cookie = cookies;
       }
+      
+      // Make HTTP request with axios
+      const response = await axios({
+        method: 'get',
+        url: item.url,
+        headers: headers,
+        responseType: 'stream',
+        timeout: this.configManager.getNumber('downloader.timeout', 30000)
+      });
       
       // Create the file path
       const filePath = `${this.configManager.getString('storage.downloadDirectory')}/${item.filename}`;
       
-      // In real implementation, we would write the file here
-      await this.fileSystemManager.createFile(filePath, `Simulated content for ${item.filename}`);
+      // Write response stream to file
+      const writer = this.fileSystemManager.createWriteStream(filePath);
+      response.data.pipe(writer);
+      
+      // Wait for the stream to finish
+      await new Promise((resolve, reject) => {
+        writer.on('finish', resolve);
+        writer.on('error', reject);
+      });
       
       return true;
     } catch (error) {
