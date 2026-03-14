@@ -143,6 +143,17 @@ class FileSystemManager {
             throw new Error(`Unable to remove directory ${dirPath}: ${error.message}`);
         }
     }
+    /**
+     * Create a write stream for a file
+     */
+    createWriteStream(filePath) {
+        // Ensure directory exists
+        const dirPath = path.dirname(filePath);
+        this.ensureDirectory(dirPath).catch(() => {
+            // If we can't create the directory, let the stream creation fail naturally
+        });
+        return fs.createWriteStream(filePath);
+    }
 }
 exports.FileSystemManager = FileSystemManager;
 //# sourceMappingURL=file-system.js.map

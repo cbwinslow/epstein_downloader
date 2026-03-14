@@ -1,3 +1,5 @@
+/// <reference types="node" />
+import * as fs from 'fs';
 /**
  * File system utility functions
  */
@@ -42,4 +44,8 @@ export declare class FileSystemManager {
      * Remove a directory and its contents
      */
     removeDirectory(dirPath: string): Promise<void>;
+    /**
+     * Create a write stream for a file
+     */
+    createWriteStream(filePath: string): fs.WriteStream;
 }
