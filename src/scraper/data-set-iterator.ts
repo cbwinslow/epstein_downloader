@@ -66,6 +66,7 @@ export class DataSetIterator {
 
     let pageNumber = 1;
     let hasMorePages = true;
+    let stoppedDueToLimit = false;
 
     while (hasMorePages && pageNumber <= this.maxPagesPerSet) {
       this.logger.info(`Processing data set ${dataSetNumber}, page ${pageNumber}`);
@@ -94,7 +95,8 @@ export class DataSetIterator {
         if (pageNumber < this.maxPagesPerSet) {
           hasMorePages = await this.scraper.hasMorePages(dataSetNumber, pageNumber);
         } else {
-          hasMorePages = false; // Reached safety limit
+          hasMorePages = false;
+          stoppedDueToLimit = true; // We hit the safety limit
         }
         
         if (hasMorePages) {
@@ -106,6 +108,7 @@ export class DataSetIterator {
         result.errors.push(errorMsg);
         
         // Continue to next page on error
+        result.pagesProcessed++; // Count this page as processed (even though it failed)
         hasMorePages = await this.scraper.hasMorePages(dataSetNumber, pageNumber);
         if (hasMorePages) {
           pageNumber++;
@@ -115,7 +118,7 @@ export class DataSetIterator {
       }
     }
     
-    if (pageNumber > this.maxPagesPerSet) {
+    if (stoppedDueToLimit) {
       const warningMsg = `Reached maximum pages limit (${this.maxPagesPerSet}) for data set ${dataSetNumber}`;
       this.logger.warn(warningMsg);
       result.errors.push(warningMsg);

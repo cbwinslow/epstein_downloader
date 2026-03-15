@@ -154,8 +154,8 @@ export class Downloader {
     this.logger.info(`Worker ${workerId} started`);
 
     while (this.isRunning) {
-      // Check if paused
-      if (this.isPaused) {
+      // Check if paused via the queue
+      if (this.downloadQueue.isProcessingPaused()) {
         await new Promise(resolve => setTimeout(resolve, 1000));
         continue;
       }

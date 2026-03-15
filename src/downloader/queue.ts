@@ -12,6 +12,7 @@ export class DownloadQueue {
   private readonly fileSystemManager: FileSystemManager;
   private readonly storageManager: StorageManager;
   private readonly logger: Logger;
+  private isPaused: boolean = false;
 
   constructor() {
     this.fileSystemManager = new FileSystemManager();
@@ -143,5 +144,44 @@ export class DownloadQueue {
       this.logger.info(`Cleared ${removed} completed/failed items from queue`);
       await this.saveState();
     }
+  }
+
+  /**
+   * Start processing the queue
+   */
+  public async startProcessing(): Promise<void> {
+    this.isPaused = false;
+    this.logger.info('Download queue processing started');
+  }
+
+  /**
+   * Pause processing of the queue
+   */
+  public async pauseProcessing(): Promise<void> {
+    this.isPaused = true;
+    this.logger.info('Download queue processing paused');
+  }
+
+  /**
+   * Resume processing of the queue
+   */
+  public async resumeProcessing(): Promise<void> {
+    this.isPaused = false;
+    this.logger.info('Download queue processing resumed');
+  }
+
+  /**
+   * Stop processing of the queue
+   */
+  public async stopProcessing(): Promise<void> {
+    this.isPaused = false;
+    this.logger.info('Download queue processing stopped');
+  }
+
+  /**
+   * Check if processing is paused
+   */
+  public isProcessingPaused(): boolean {
+    return this.isPaused;
   }
 }
