@@ -1,6 +1,7 @@
-import { Logger } from '@utils/logger';
+import { Logger } from '../utils/logger';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import { ConfigManager } from '../config/manager';
 
 /**
  * Interface for scraped file information
@@ -17,9 +18,11 @@ export interface ScrapedFile {
 export class JusticeScraper {
   private logger: Logger;
   private baseUrl: string = 'https://www.justice.gov';
+  private configManager: ConfigManager;
 
   constructor() {
     this.logger = Logger.getInstance();
+    this.configManager = new ConfigManager();
   }
 
   /**
@@ -33,77 +36,87 @@ export class JusticeScraper {
     this.logger.info(`Scraping Justice Department page: ${url}`);
 
     try {
+      // Get cookies from environment for authentication
+      const cookies = process.env.DOJ_COOKIES || this.configManager.getString('DOJ_COOKIES', '');
+      
+      const headers: any = {
+        'User-Agent': 'EpsteinDownloader/1.0 (+https://github.com/yourusername/epstein-downloader)'
+      };
+      
+      if (cookies) {
+        headers.Cookie = cookies;
+        this.logger.debug('Using cookies for authentication');
+      }
+
       const response = await axios.get(url, {
         timeout: 30000,
-        headers: {
-          'User-Agent': 'EpsteinDownloader/1.0 (+https://github.com/yourusername/epstein-downloader)'
+        headers: headers,
+        validateStatus: (status) => {
+          // Accept 200 (success) and 403 (forbidden - might indicate auth issues)
+          return status === 200 || status === 403;
         }
       });
+
+      // Check for authentication issues
+      if (response.status === 403) {
+        this.logger.warn(`Authentication issue detected for ${url}. Response may be limited.`);
+      }
 
       const $ = cheerio.load(response.data);
       const files: ScrapedFile[] = [];
 
-      // Look for file links on the page
-      // Based on typical Justice Department page structure, we'll look for common patterns
+      // Enhanced file detection patterns
+      const fileExtensions = ['.pdf', '.zip', '.doc', '.docx', '.xls', '.xlsx', '.csv', '.txt', '.rtf', '.ppt', '.pptx', '.jpg', '.jpeg', '.png', '.gif', '.bmp'];
+      
+      // Look for file links in all anchor tags
       $('a[href]').each((index, element) => {
         const href = $(element).attr('href');
         const text = $(element).text().trim();
+        const title = $(element).attr('title') || '';
 
-        if (href && text) {
-          // Filter for likely file links (PDFs, ZIPs, documents, etc.)
-          const fileExtensions = ['.pdf', '.zip', '.doc', '.docx', '.xls', '.xlsx', '.csv', '.txt'];
-          const isFileLink = fileExtensions.some(ext => 
-            href.toLowerCase().endsWith(ext) || 
-            text.toLowerCase().endsWith(ext)
+        if (href) {
+          // Check if URL contains file extension
+          const urlHasExtension = fileExtensions.some(ext => href.toLowerCase().includes(ext));
+          
+          // Check if text or title suggests it's a file
+          const textSuggestsFile = text.length > 0 && (
+            fileExtensions.some(ext => text.toLowerCase().includes(ext)) ||
+            /download|file|document|attachment|pdf|zip|doc/i.test(text)
+          );
+          
+          // Check if title suggests it's a file
+          const titleSuggestsFile = title.length > 0 && (
+            fileExtensions.some(ext => title.toLowerCase().includes(ext)) ||
+            /download|file|document|attachment|pdf|zip|doc/i.test(title)
           );
 
-          if (isFileLink) {
+          if (urlHasExtension || textSuggestsFile || titleSuggestsFile) {
             // Convert relative URLs to absolute
             const fileUrl = href.startsWith('http') ? href : `${this.baseUrl}${href}`;
             
-            // Use the link text as filename if it looks like a filename, otherwise extract from URL
-            let filename = text;
-            if (!fileExtensions.some(ext => filename.toLowerCase().endsWith(ext))) {
-              // Try to extract filename from URL
+            // Generate filename
+            let filename = '';
+            if (textSuggestsFile && text.length > 0) {
+              filename = text;
+            } else if (titleSuggestsFile && title.length > 0) {
+              filename = title;
+            } else {
+              // Extract from URL
               try {
                 const urlObj = new URL(fileUrl);
-                filename = urlObj.pathname.substring(urlObj.pathname.lastIndexOf('/') + 1) || `file_${Date.now()}`;
+                filename = urlObj.pathname.substring(urlObj.pathname.lastIndexOf('/') + 1);
+                if (!filename || filename.length < 3) {
+                  filename = `file_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+                }
               } catch {
-                filename = `file_${Date.now()}`;
+                filename = `file_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
               }
             }
 
-            files.push({
-              url: fileUrl,
-              filename: filename
-            });
-          }
-        }
-      });
-
-      // Also look for direct file links in common containers
-      $('.view-content a, .file a, .attachment a, .download-link').each((index, element) => {
-        const href = $(element).attr('href');
-        const text = $(element).text().trim() || $(element).attr('title') || '';
-
-        if (href && text) {
-          const fileExtensions = ['.pdf', '.zip', '.doc', '.docx', '.xls', '.xlsx', '.csv', '.txt'];
-          const isFileLink = fileExtensions.some(ext => 
-            href.toLowerCase().endsWith(ext) || 
-            text.toLowerCase().endsWith(ext)
-          );
-
-          if (isFileLink) {
-            const fileUrl = href.startsWith('http') ? href : `${this.baseUrl}${href}`;
-            let filename = text;
-            
-            if (!fileExtensions.some(ext => filename.toLowerCase().endsWith(ext))) {
-              try {
-                const urlObj = new URL(fileUrl);
-                filename = urlObj.pathname.substring(urlObj.pathname.lastIndexOf('/') + 1) || `file_${Date.now()}`;
-              } catch {
-                filename = `file_${Date.now()}`;
-              }
+            // Clean filename
+            filename = filename.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').trim();
+            if (filename.length < 3) {
+              filename = `file_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
             }
 
             // Avoid duplicates
@@ -113,6 +126,87 @@ export class JusticeScraper {
                 url: fileUrl,
                 filename: filename
               });
+              this.logger.debug(`Found file: ${filename} -> ${fileUrl}`);
+            }
+          }
+        }
+      });
+
+      // Look for files in specific containers that commonly hold document links
+      const containers = ['.view-content', '.file', '.attachment', '.download-link', '.field-file', '.document-list', '.file-list'];
+      containers.forEach(container => {
+        if ($(container).length > 0) {
+          $(`${container} a[href]`).each((index, element) => {
+            const href = $(element).attr('href');
+            const text = $(element).text().trim();
+            const title = $(element).attr('title') || '';
+
+            if (href) {
+              const urlHasExtension = fileExtensions.some(ext => href.toLowerCase().includes(ext));
+              const textSuggestsFile = text.length > 0 && fileExtensions.some(ext => text.toLowerCase().includes(ext));
+              const titleSuggestsFile = title.length > 0 && fileExtensions.some(ext => title.toLowerCase().includes(ext));
+
+              if (urlHasExtension || textSuggestsFile || titleSuggestsFile) {
+                const fileUrl = href.startsWith('http') ? href : `${this.baseUrl}${href}`;
+                let filename = text || title;
+                
+                if (!filename) {
+                  try {
+                    const urlObj = new URL(fileUrl);
+                    filename = urlObj.pathname.substring(urlObj.pathname.lastIndexOf('/') + 1);
+                  } catch {
+                    filename = `file_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+                  }
+                }
+
+                filename = filename.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').trim();
+                if (filename.length < 3) {
+                  filename = `file_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+                }
+
+                const exists = files.some(f => f.url === fileUrl);
+                if (!exists) {
+                  files.push({
+                    url: fileUrl,
+                    filename: filename
+                  });
+                  this.logger.debug(`Found file in ${container}: ${filename} -> ${fileUrl}`);
+                }
+              }
+            }
+          });
+        }
+      });
+
+      // Look for files in table rows (common for document listings)
+      $('table tbody tr').each((index, row) => {
+        const cells = $(row).find('td');
+        if (cells.length >= 2) {
+          // Assume first cell might be filename, second cell might be link
+          const filenameCell = $(cells[0]).text().trim();
+          const linkCell = $(cells[1]).find('a[href]').first();
+          
+          if (linkCell.length > 0) {
+            const href = linkCell.attr('href');
+            const linkText = linkCell.text().trim();
+            
+            if (href && (filenameCell.length > 0 || linkText.length > 0)) {
+              const fileUrl = href.startsWith('http') ? href : `${this.baseUrl}${href}`;
+              let filename = filenameCell || linkText;
+              
+              filename = filename.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').trim();
+              if (filename.length < 3) {
+                filename = `file_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+              }
+
+              const exists = files.some(f => f.url === fileUrl);
+              if (!exists) {
+                files.push({
+                  url: fileUrl,
+                  filename: filename
+                });
+                this.logger.debug(`Found file in table: ${filename} -> ${fileUrl}`);
+              }
             }
           }
         }

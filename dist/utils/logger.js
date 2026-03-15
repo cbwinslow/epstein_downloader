@@ -11,6 +11,14 @@ class Logger {
         this.logger = this.createLogger();
     }
     /**
+     * Set the ConfigManager instance to avoid circular dependency during initialization
+     */
+    setConfigManager(configManager) {
+        this.configManager = configManager;
+        // Recreate logger with actual configuration values
+        this.logger = this.createLogger();
+    }
+    /**
      * Get the singleton logger instance
      */
     static getInstance() {

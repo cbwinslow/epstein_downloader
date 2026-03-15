@@ -1,5 +1,5 @@
 import { createLogger, format, transports } from 'winston';
-import { ConfigManager } from '@config/manager';
+import { ConfigManager } from '../config/manager';
 
 /**
  * Singleton logger instance for the application

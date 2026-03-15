@@ -1,0 +1,43 @@
+{
+  "downloader": {
+    "maxThreads": 4,
+    "timeout": 30000,
+    "retryAttempts": 3,
+    "retryDelay": 1000,
+    "userAgent": "EpsteinDownloader/1.0 (+https://github.com/yourusername/epstein-downloader)",
+    "respectRobotsTxt": true,
+    "rateLimit": {
+      "requestsPerSecond": 2,
+      "burstLimit": 5
+    }
+  },
+  "storage": {
+    "downloadDirectory": "./downloads",
+    "logDirectory": "./logs",
+    "stateFile": "./download-state.json",
+    "maxDiskUsage": 0.9
+  },
+  "validation": {
+    "checkConnectionInterval": 60000,
+    "cookieValidationEnabled": true,
+    "serverHealthCheckEnabled": true,
+    "diskSpaceCheckEnabled": true
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "maxSize": "10m",
+    "maxFiles": 5
+  },
+  "aiAgent": {
+    "enabled": false,
+    "model": "openrouter/auto",
+    "temperature": 0.1,
+    "maxTokens": 1000,
+    "validationPrompts": {
+      "connectionCheck": "Check if the DOJ website is accessible and responding normally. Consider factors like HTTP status codes, response times, and any error messages.",
+      "cookieValidation": "Validate if the provided cookies are likely to be valid for accessing the DOJ Epstein files download area. Consider cookie names, expiration patterns, and typical authentication cookie characteristics.",
+      "downloadProgress": "Analyze the download log and determine if the download process is proceeding normally, identify any issues, and suggest appropriate actions."
+    }
+  }
+}

@@ -2,15 +2,23 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DownloadQueue = void 0;
 const types_1 = require("./types");
-const logger_1 = require("@utils/logger");
-const file_system_1 = require("@utils/file-system");
+const logger_1 = require("../utils/logger");
+const file_system_1 = require("../utils/file-system");
+const storage_manager_1 = require("../utils/storage-manager");
 /**
  * Manages the download queue and persistence
  */
 class DownloadQueue {
     constructor() {
         this.queue = [];
+        this.isPaused = false;
         this.fileSystemManager = new file_system_1.FileSystemManager();
+        // Initialize storage manager with default local storage
+        const storageConfig = {
+            type: storage_manager_1.StorageType.LOCAL,
+            basePath: './downloads'
+        };
+        this.storageManager = new storage_manager_1.StorageManager(storageConfig);
         this.logger = logger_1.Logger.getInstance();
         // State file path will be set during initialization
         this.stateFilePath = './download-state.json';
@@ -57,7 +65,7 @@ class DownloadQueue {
      */
     async loadState() {
         try {
-            const stateData = await this.fileSystemManager.readFile(this.stateFilePath);
+            const stateData = await this.storageManager.readFile(this.stateFilePath);
             if (stateData) {
                 this.queue = JSON.parse(stateData);
                 // Convert string dates back to Date objects
@@ -89,7 +97,7 @@ class DownloadQueue {
                 startTime: item.startTime ? item.startTime.toISOString() : null,
                 endTime: item.endTime ? item.endTime.toISOString() : null
             }));
-            await this.fileSystemManager.writeFile(this.stateFilePath, JSON.stringify(serializableQueue, null, 2));
+            await this.storageManager.writeFile(this.stateFilePath, JSON.stringify(serializableQueue, null, 2));
             this.logger.debug('Saved queue state to file');
         }
         catch (error) {
@@ -123,6 +131,40 @@ class DownloadQueue {
             this.logger.info(`Cleared ${removed} completed/failed items from queue`);
             await this.saveState();
         }
+    }
+    /**
+     * Start processing the queue
+     */
+    async startProcessing() {
+        this.isPaused = false;
+        this.logger.info('Download queue processing started');
+    }
+    /**
+     * Pause processing of the queue
+     */
+    async pauseProcessing() {
+        this.isPaused = true;
+        this.logger.info('Download queue processing paused');
+    }
+    /**
+     * Resume processing of the queue
+     */
+    async resumeProcessing() {
+        this.isPaused = false;
+        this.logger.info('Download queue processing resumed');
+    }
+    /**
+     * Stop processing of the queue
+     */
+    async stopProcessing() {
+        this.isPaused = false;
+        this.logger.info('Download queue processing stopped');
+    }
+    /**
+     * Check if processing is paused
+     */
+    isProcessingPaused() {
+        return this.isPaused;
     }
 }
 exports.DownloadQueue = DownloadQueue;

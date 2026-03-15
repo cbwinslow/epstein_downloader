@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AIAgent = void 0;
-const logger_1 = require("@utils/logger");
-const manager_1 = require("@config/manager");
+const logger_1 = require("../utils/logger");
+const manager_1 = require("../config/manager");
 /**
  * AI Agent for validation and monitoring tasks
  *

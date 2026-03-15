@@ -6,7 +6,9 @@ export declare class DownloadQueue {
     private queue;
     private readonly stateFilePath;
     private readonly fileSystemManager;
+    private readonly storageManager;
     private readonly logger;
+    private isPaused;
     constructor();
     /**
      * Initialize the queue (load state, etc.)
@@ -40,4 +42,24 @@ export declare class DownloadQueue {
      * Clear completed and failed items from queue (optional cleanup)
      */
     clearCompleted(): Promise<void>;
+    /**
+     * Start processing the queue
+     */
+    startProcessing(): Promise<void>;
+    /**
+     * Pause processing of the queue
+     */
+    pauseProcessing(): Promise<void>;
+    /**
+     * Resume processing of the queue
+     */
+    resumeProcessing(): Promise<void>;
+    /**
+     * Stop processing of the queue
+     */
+    stopProcessing(): Promise<void>;
+    /**
+     * Check if processing is paused
+     */
+    isProcessingPaused(): boolean;
 }

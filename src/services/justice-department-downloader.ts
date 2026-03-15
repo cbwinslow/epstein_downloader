@@ -1,9 +1,9 @@
-import { Logger } from '@utils/logger';
-import { DataSetIterator } from '@scraper/data-set-iterator';
-import { JusticeScraper } from '@scraper/justice-scraper';
-import { StorageManager, StorageType } from '@utils/storage-manager';
-import { DownloadItem, DownloadStatus } from '@downloader/types';
-import { DownloadQueue } from '@downloader/queue';
+import { Logger } from '../utils/logger';
+import { DataSetIterator } from '../scraper/data-set-iterator';
+import { JusticeScraper } from '../scraper/justice-scraper';
+import { StorageManager, StorageType } from '../utils/storage-manager';
+import { DownloadItem, DownloadStatus } from '../downloader/types';
+import { DownloadQueue } from '../downloader/queue';
 
 /**
  * Service for downloading Justice Department Epstein data sets

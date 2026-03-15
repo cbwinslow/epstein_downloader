@@ -1,5 +1,5 @@
-import { Logger } from '@utils/logger';
-import { ConfigManager } from '@config/manager';
+import { Logger } from '../utils/logger';
+import { ConfigManager } from '../config/manager';
 import { AIAgent } from './ai-agent';
 
 /**

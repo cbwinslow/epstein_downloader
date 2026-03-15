@@ -13,4 +13,5 @@ module.exports = {
     '^@downloader/(.*)$': '<rootDir>/src/downloader/$1',
     '^@scraper/(.*)$': '<rootDir>/src/scraper/$1',
   },
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
 };

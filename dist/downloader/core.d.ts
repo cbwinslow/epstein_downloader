@@ -9,6 +9,7 @@ export declare class Downloader {
     private downloadQueue;
     private fileSystemManager;
     private isRunning;
+    private isPaused;
     private maxThreads;
     constructor();
     /**
@@ -19,6 +20,14 @@ export declare class Downloader {
      * Start the download process
      */
     start(): Promise<void>;
+    /**
+     * Pause the download process
+     */
+    pause(): Promise<void>;
+    /**
+     * Resume the download process
+     */
+    resume(): Promise<void>;
     /**
      * Stop the download process
      */

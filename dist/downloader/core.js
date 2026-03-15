@@ -5,12 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Downloader = void 0;
 const types_1 = require("./types");
-const manager_1 = require("@config/manager");
-const logger_1 = require("@utils/logger");
-const connection_validator_1 = require("@agents/connection-validator");
-const cookie_manager_1 = require("@agents/cookie-manager");
+const manager_1 = require("../config/manager");
+const logger_1 = require("../utils/logger");
+const connection_validator_1 = require("../agents/connection-validator");
+const cookie_manager_1 = require("../agents/cookie-manager");
 const queue_1 = require("./queue");
-const file_system_1 = require("@utils/file-system");
+const file_system_1 = require("../utils/file-system");
 const axios_1 = __importDefault(require("axios"));
 /**
  * Core downloader class that manages the download process
@@ -18,6 +18,7 @@ const axios_1 = __importDefault(require("axios"));
 class Downloader {
     constructor() {
         this.isRunning = false;
+        this.isPaused = false;
         this.configManager = new manager_1.ConfigManager();
         this.logger = logger_1.Logger.getInstance();
         this.connectionValidator = new connection_validator_1.ConnectionValidator();
@@ -52,6 +53,7 @@ class Downloader {
         }
         this.logger.info('Starting downloader...');
         this.isRunning = true;
+        this.isPaused = false;
         // Validate connection and cookies before starting
         const connectionValid = await this.connectionValidator.validate();
         if (!connectionValid) {
@@ -82,6 +84,36 @@ class Downloader {
         }
     }
     /**
+     * Pause the download process
+     */
+    async pause() {
+        if (!this.isRunning) {
+            this.logger.warn('Downloader is not running');
+            return;
+        }
+        if (this.isPaused) {
+            this.logger.warn('Downloader is already paused');
+            return;
+        }
+        this.logger.info('Pausing downloader...');
+        this.isPaused = true;
+    }
+    /**
+     * Resume the download process
+     */
+    async resume() {
+        if (!this.isRunning) {
+            this.logger.warn('Downloader is not running');
+            return;
+        }
+        if (!this.isPaused) {
+            this.logger.warn('Downloader is not paused');
+            return;
+        }
+        this.logger.info('Resuming downloader...');
+        this.isPaused = false;
+    }
+    /**
      * Stop the download process
      */
     async stop() {
@@ -91,6 +123,7 @@ class Downloader {
         }
         this.logger.info('Stopping downloader...');
         this.isRunning = false;
+        this.isPaused = false;
         // The workers will check isRunning and exit gracefully
     }
     /**
@@ -99,6 +132,11 @@ class Downloader {
     async worker(workerId) {
         this.logger.info(`Worker ${workerId} started`);
         while (this.isRunning) {
+            // Check if paused via the queue
+            if (this.downloadQueue.isProcessingPaused()) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                continue;
+            }
             try {
                 // Get next item from queue
                 const item = await this.downloadQueue.nextItem();

@@ -1,5 +1,5 @@
-import { Logger } from '@utils/logger';
-import { DownloadItem, DownloadStatus } from '@downloader/types';
+import { Logger } from '../utils/logger';
+import { DownloadItem, DownloadStatus } from '../downloader/types';
 import { JusticeScraper } from './justice-scraper';
 
 /**

@@ -20,13 +20,6 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "baseUrl": ".",
-    "paths": {
-      "@utils/*": ["src/utils/*"],
-      "@config/*": ["src/config/*"],
-      "@agents/*": ["src/agents/*"],
-      "@downloader/*": ["src/downloader/*"],
-      "@scraper/*": ["src/scraper/*"]
-    }
   },
   "include": [
     "src/**/*"

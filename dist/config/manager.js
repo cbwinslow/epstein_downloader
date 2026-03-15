@@ -26,7 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConfigManager = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
-const logger_1 = require("@utils/logger");
+const logger_1 = require("../utils/logger");
 /**
  * Manages application configuration from multiple sources
  */
@@ -35,6 +35,8 @@ class ConfigManager {
         this.config = {};
         // Initialize logger lazily to avoid circular dependency
         this.logger = logger_1.Logger.getInstance();
+        // Give the logger access to this config manager instance
+        this.logger.setConfigManager(this);
         this.envVars = process.env;
         this.loadConfiguration();
     }

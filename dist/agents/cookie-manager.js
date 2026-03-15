@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CookieManager = void 0;
-const logger_1 = require("@utils/logger");
-const manager_1 = require("@config/manager");
+const logger_1 = require("../utils/logger");
+const manager_1 = require("../config/manager");
 const ai_agent_1 = require("./ai-agent");
 /**
  * Manages and validates cookies for DOJ website authentication

@@ -1,3 +1,4 @@
+import { ConfigManager } from '../config/manager';
 /**
  * Singleton logger instance for the application
  */
@@ -6,6 +7,10 @@ export declare class Logger {
     private logger;
     private configManager;
     private constructor();
+    /**
+     * Set the ConfigManager instance to avoid circular dependency during initialization
+     */
+    setConfigManager(configManager: ConfigManager): void;
     /**
      * Get the singleton logger instance
      */

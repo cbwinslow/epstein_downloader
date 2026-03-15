@@ -37,18 +37,31 @@ describe('JusticeDepartmentDownloader - Integration Tests', () => {
     // Create a fresh instance for each test
     downloader = new JusticeDepartmentDownloader();
     
-    // Replace private dependencies with mocked instances using type assertion
-    // @ts-ignore - Accessing private property for testing
-    (downloader as any).dataSetIterator = new mockDataSetIterator.DataSetIterator();
-    // @ts-ignore - Accessing private property for testing
-    (downloader as any).justiceScraper = new mockJusticeScraper.JusticeScraper();
-    // @ts-ignore - Accessing private property for testing
-    (downloader as any).storageManager = new mockStorageManager.StorageManager({
+    // Create mock instances
+    mockDataSetIteratorInstance = new mockDataSetIterator.DataSetIterator();
+    mockJusticeScraperInstance = new mockJusticeScraper.JusticeScraper();
+    mockStorageManagerInstance = new mockStorageManager.StorageManager({
       type: 'local' as any,
       basePath: './downloads/justice-department'
     });
+    mockDownloadQueueInstance = new mockDownloadQueue.DownloadQueue();
+    
+    // Setup mock methods on the queue instance
+    mockDownloadQueueInstance.initialize = jest.fn().mockResolvedValue(undefined);
+    mockDownloadQueueInstance.pauseProcessing = jest.fn().mockResolvedValue(undefined);
+    mockDownloadQueueInstance.resumeProcessing = jest.fn().mockResolvedValue(undefined);
+    mockDownloadQueueInstance.stopProcessing = jest.fn().mockResolvedValue(undefined);
+    mockDownloadQueueInstance.getStats = jest.fn().mockResolvedValue({ total: 0, completed: 0, failed: 0, pending: 0 });
+    
+    // Replace private dependencies with mocked instances using type assertion
     // @ts-ignore - Accessing private property for testing
-    (downloader as any).downloadQueue = new mockDownloadQueue.DownloadQueue();
+    (downloader as any).dataSetIterator = mockDataSetIteratorInstance;
+    // @ts-ignore - Accessing private property for testing
+    (downloader as any).justiceScraper = mockJusticeScraperInstance;
+    // @ts-ignore - Accessing private property for testing
+    (downloader as any).storageManager = mockStorageManagerInstance;
+    // @ts-ignore - Accessing private property for testing
+    (downloader as any).downloadQueue = mockDownloadQueueInstance;
     
     // Clear all mocks
     jest.clearAllMocks();
@@ -155,16 +168,9 @@ describe('JusticeDepartmentDownloader - Integration Tests', () => {
 
   describe('pause and resume functionality', () => {
     it('should pause the downloader', async () => {
-      // Setup required mocks
+      // Set the downloader as running
       // @ts-ignore - Accessing private property for testing
-      (downloader as any).storageManager.ensureDirectory = jest.fn()
-        .mockResolvedValue(undefined);
-      // @ts-ignore - Accessing private property for testing
-      (downloader as any).downloadQueue.initialize = jest.fn()
-        .mockResolvedValue(undefined);
-      // @ts-ignore - Accessing private property for testing
-      (downloader as any).downloadQueue.pauseProcessing = jest.fn()
-        .mockResolvedValue(undefined);
+      (downloader as any).isRunning = true;
       
       // Execute
       await downloader.pause();
@@ -175,16 +181,11 @@ describe('JusticeDepartmentDownloader - Integration Tests', () => {
     });
     
     it('should resume the downloader', async () => {
-      // Setup required mocks
+      // Set the downloader as running and paused
       // @ts-ignore - Accessing private property for testing
-      (downloader as any).storageManager.ensureDirectory = jest.fn()
-        .mockResolvedValue(undefined);
+      (downloader as any).isRunning = true;
       // @ts-ignore - Accessing private property for testing
-      (downloader as any).downloadQueue.initialize = jest.fn()
-        .mockResolvedValue(undefined);
-      // @ts-ignore - Accessing private property for testing
-      (downloader as any).downloadQueue.resumeProcessing = jest.fn()
-        .mockResolvedValue(undefined);
+      (downloader as any).isPaused = true;
       
       // Execute
       await downloader.resume();
@@ -197,6 +198,10 @@ describe('JusticeDepartmentDownloader - Integration Tests', () => {
 
   describe('stop functionality', () => {
     it('should stop the downloader', async () => {
+      // Set the downloader as running
+      // @ts-ignore - Accessing private property for testing
+      (downloader as any).isRunning = true;
+      
       // Setup required mocks
       // @ts-ignore - Accessing private property for testing
       (downloader as any).storageManager.ensureDirectory = jest.fn()

@@ -1,7 +1,7 @@
 import { DownloadItem, DownloadStatus } from './types';
-import { Logger } from '@utils/logger';
-import { FileSystemManager } from '@utils/file-system';
-import { StorageManager, StorageType } from '@utils/storage-manager';
+import { Logger } from '../utils/logger';
+import { FileSystemManager } from '../utils/file-system';
+import { StorageManager, StorageType } from '../utils/storage-manager';
 
 /**
  * Manages the download queue and persistence

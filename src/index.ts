@@ -1,11 +1,15 @@
-import { Downloader } from '@downloader/core';
+import { Downloader } from './downloader/core';
+import * as dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 /**
  * Main entry point for the Epstein Files Downloader
  */
 async function main(): Promise<void> {
   console.log('Epstein Files Downloader starting...');
-  
+   
   const downloader = new Downloader();
   
   try {

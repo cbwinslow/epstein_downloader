@@ -1,0 +1,261 @@
+{
+  "dataSets": [
+    {
+      "dataSetNumber": 1,
+      "pages": [
+        {
+          "pageNumber": 1,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 100
+        },
+        {
+          "pageNumber": 2,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 51
+        },
+        {
+          "pageNumber": 3,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 50
+        },
+        {
+          "pageNumber": 4,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 43
+        },
+        {
+          "pageNumber": 5,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 42
+        }
+      ],
+      "filesFound": 0,
+      "filesDownloaded": 0,
+      "errors": [],
+      "warnings": [
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired"
+      ]
+    },
+    {
+      "dataSetNumber": 2,
+      "pages": [
+        {
+          "pageNumber": 1,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 46
+        },
+        {
+          "pageNumber": 2,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 49
+        },
+        {
+          "pageNumber": 3,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 45
+        },
+        {
+          "pageNumber": 4,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 52
+        },
+        {
+          "pageNumber": 5,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 42
+        }
+      ],
+      "filesFound": 0,
+      "filesDownloaded": 0,
+      "errors": [],
+      "warnings": [
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired"
+      ]
+    },
+    {
+      "dataSetNumber": 3,
+      "pages": [
+        {
+          "pageNumber": 1,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 40
+        },
+        {
+          "pageNumber": 2,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 42
+        },
+        {
+          "pageNumber": 3,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 41
+        },
+        {
+          "pageNumber": 4,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 46
+        },
+        {
+          "pageNumber": 5,
+          "filesFound": 0,
+          "filesDownloaded": 0,
+          "errors": [],
+          "warnings": [
+            "Authentication required - cookies may be invalid or expired"
+          ],
+          "files": [],
+          "statusCode": 403,
+          "responseTime": 45
+        }
+      ],
+      "filesFound": 0,
+      "filesDownloaded": 0,
+      "errors": [],
+      "warnings": [
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired",
+        "Authentication required - cookies may be invalid or expired"
+      ]
+    }
+  ],
+  "totalFilesFound": 0,
+  "totalFilesDownloaded": 0,
+  "errors": [],
+  "warnings": [
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired",
+    "Authentication required - cookies may be invalid or expired"
+  ],
+  "startTime": "2026-03-15T03:43:08.346Z",
+  "endTime": "2026-03-15T03:43:09.802Z",
+  "duration": "0m 1s",
+  "config": {
+    "testPagesPerDataSet": 3,
+    "testDataSets": [
+      1,
+      2,
+      3
+    ],
+    "maxFilesPerPage": 1
+  }
+}
