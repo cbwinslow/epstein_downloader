@@ -53,7 +53,7 @@ class JusticeScraper {
             // Get cookies from environment for authentication
             const cookies = process.env.DOJ_COOKIES || this.configManager.getString('DOJ_COOKIES', '');
             const headers = {
-                'User-Agent': 'EpsteinDownloader/1.0 (+https://github.com/yourusername/epstein-downloader)'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             };
             if (cookies) {
                 headers.Cookie = cookies;
@@ -219,11 +219,18 @@ class JusticeScraper {
         const url = `${this.baseUrl}/epstein/doj-disclosures/data-set-${dataSetNumber}-files?page=${pageNumber}`;
         this.logger.info(`Checking for more pages: ${url}`);
         try {
+            // Get cookies from environment for authentication
+            const cookies = process.env.DOJ_COOKIES || this.configManager.getString('DOJ_COOKIES', '');
+            const headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            };
+            if (cookies) {
+                headers.Cookie = cookies;
+                this.logger.debug('Using cookies for pagination check');
+            }
             const response = await axios_1.default.get(url, {
                 timeout: 30000,
-                headers: {
-                    'User-Agent': 'EpsteinDownloader/1.0 (+https://github.com/yourusername/epstein-downloader)'
-                }
+                headers: headers
             });
             const $ = cheerio.load(response.data);
             // Look for pagination indicators

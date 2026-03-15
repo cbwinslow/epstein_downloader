@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-03-15T03:43:09.810Z",
+  "timestamp": "2026-03-15T04:01:16.101Z",
   "environment": {
     "nodeVersion": "v24.14.0",
     "platform": "win32",
-    "cookiesConfigured": false,
-    "cookiesLength": 0
+    "cookiesConfigured": true,
+    "cookiesLength": 492
   },
   "issues": {
     "authenticationProblems": 15,
@@ -12,7 +12,6 @@
     "downloadProblems": 0
   },
   "recommendations": [
-    "Configure valid DOJ cookies in the .env file",
     "Check if DOJ cookies are still valid and not expired",
     "Consider implementing rate limiting to avoid detection",
     "Test with different User-Agent strings",

@@ -9,6 +9,7 @@
  * 4. Generate comprehensive monitoring reports
  */
 
+require('dotenv').config();
 const { JusticeScraper } = require('./dist/scraper/justice-scraper');
 const { StorageManager } = require('./dist/utils/storage-manager');
 const { StorageType } = require('./dist/utils/storage-manager');

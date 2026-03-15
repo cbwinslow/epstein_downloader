@@ -40,7 +40,7 @@ export class JusticeScraper {
       const cookies = process.env.DOJ_COOKIES || this.configManager.getString('DOJ_COOKIES', '');
       
       const headers: any = {
-        'User-Agent': 'EpsteinDownloader/1.0 (+https://github.com/yourusername/epstein-downloader)'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
       };
       
       if (cookies) {
@@ -232,11 +232,21 @@ export class JusticeScraper {
     this.logger.info(`Checking for more pages: ${url}`);
 
     try {
+      // Get cookies from environment for authentication
+      const cookies = process.env.DOJ_COOKIES || this.configManager.getString('DOJ_COOKIES', '');
+      
+      const headers: any = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      };
+      
+      if (cookies) {
+        headers.Cookie = cookies;
+        this.logger.debug('Using cookies for pagination check');
+      }
+
       const response = await axios.get(url, {
         timeout: 30000,
-        headers: {
-          'User-Agent': 'EpsteinDownloader/1.0 (+https://github.com/yourusername/epstein-downloader)'
-        }
+        headers: headers
       });
 
       const $ = cheerio.load(response.data);
