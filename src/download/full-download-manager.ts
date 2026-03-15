@@ -3,6 +3,7 @@ import path from 'path';
 import axios from 'axios';
 import { JusticeScraper } from '../scraper/justice-scraper';
 import { Logger } from '../utils/logger';
+import { SecurityUtils } from '../utils/security';
 
 export interface DownloadProgress {
   dataSetNumber: number;
@@ -35,9 +36,13 @@ export class FullDownloadManager {
   private statsCallback?: (stats: DownloadStats) => void;
 
   constructor(downloadDir: string = './downloads/full-download') {
+    const securityUtils = SecurityUtils.getInstance();
+    
+    // Validate download directory path
+    this.downloadDir = securityUtils.validateDownloadDir(downloadDir);
+    
     this.scraper = new JusticeScraper();
     this.logger = Logger.getInstance();
-    this.downloadDir = downloadDir;
     
     // Create download directory
     if (!fs.existsSync(this.downloadDir)) {
@@ -64,6 +69,11 @@ export class FullDownloadManager {
    * Download all files from a specific data set
    */
   async downloadDataSet(dataSetNumber: number, maxPages: number = 100): Promise<DownloadStats> {
+    const securityUtils = SecurityUtils.getInstance();
+    
+    // Validate data set number
+    const validatedDataSetNumber = securityUtils.validateDataSetNumber(dataSetNumber);
+    
     const startTime = Date.now();
     const stats: DownloadStats = {
       totalFilesFound: 0,
@@ -74,7 +84,7 @@ export class FullDownloadManager {
       duration: 0
     };
 
-    this.logger.info(`Starting download for Data Set ${dataSetNumber}`);
+    this.logger.info(`Starting download for Data Set ${validatedDataSetNumber}`);
 
     try {
       // First, discover all pages and files
@@ -228,7 +238,19 @@ export class FullDownloadManager {
    * Download a single file with retry logic
    */
   private async downloadFile(file: any, dataSetNumber: number, pageNumber: number, fileIndex: number): Promise<{size: number} | null> {
-    const filename = `${dataSetNumber}_page${pageNumber}_file${fileIndex}_${file.filename}`;
+    const securityUtils = SecurityUtils.getInstance();
+    
+    // Validate inputs
+    const validatedPageNumber = securityUtils.validatePageNumber(pageNumber);
+    const validatedFileIndex = securityUtils.validateFileIndex(fileIndex);
+    
+    // Sanitize filename to prevent path traversal attacks
+    const sanitizedFilename = securityUtils.sanitizeFileName(file.filename);
+    const filename = `${dataSetNumber}_page${validatedPageNumber}_file${validatedFileIndex}_${sanitizedFilename}`;
+    
+    // Validate URL to prevent SSRF attacks
+    const validatedUrl = securityUtils.validateUrl(file.url);
+    
     const filePath = path.join(this.downloadDir, `data-set-${dataSetNumber}`, filename);
 
     // Create directory for this data set

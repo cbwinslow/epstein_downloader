@@ -9,11 +9,14 @@ const path_1 = __importDefault(require("path"));
 const axios_1 = __importDefault(require("axios"));
 const justice_scraper_1 = require("../scraper/justice-scraper");
 const logger_1 = require("../utils/logger");
+const security_1 = require("../utils/security");
 class FullDownloadManager {
     constructor(downloadDir = './downloads/full-download') {
+        const securityUtils = security_1.SecurityUtils.getInstance();
+        // Validate download directory path
+        this.downloadDir = securityUtils.validateDownloadDir(downloadDir);
         this.scraper = new justice_scraper_1.JusticeScraper();
         this.logger = logger_1.Logger.getInstance();
-        this.downloadDir = downloadDir;
         // Create download directory
         if (!fs_1.default.existsSync(this.downloadDir)) {
             fs_1.default.mkdirSync(this.downloadDir, { recursive: true });
@@ -36,6 +39,9 @@ class FullDownloadManager {
      * Download all files from a specific data set
      */
     async downloadDataSet(dataSetNumber, maxPages = 100) {
+        const securityUtils = security_1.SecurityUtils.getInstance();
+        // Validate data set number
+        const validatedDataSetNumber = securityUtils.validateDataSetNumber(dataSetNumber);
         const startTime = Date.now();
         const stats = {
             totalFilesFound: 0,
@@ -45,7 +51,7 @@ class FullDownloadManager {
             warnings: [],
             duration: 0
         };
-        this.logger.info(`Starting download for Data Set ${dataSetNumber}`);
+        this.logger.info(`Starting download for Data Set ${validatedDataSetNumber}`);
         try {
             // First, discover all pages and files
             const pages = await this.discoverPages(dataSetNumber, maxPages);
@@ -175,7 +181,15 @@ class FullDownloadManager {
      * Download a single file with retry logic
      */
     async downloadFile(file, dataSetNumber, pageNumber, fileIndex) {
-        const filename = `${dataSetNumber}_page${pageNumber}_file${fileIndex}_${file.filename}`;
+        const securityUtils = security_1.SecurityUtils.getInstance();
+        // Validate inputs
+        const validatedPageNumber = securityUtils.validatePageNumber(pageNumber);
+        const validatedFileIndex = securityUtils.validateFileIndex(fileIndex);
+        // Sanitize filename to prevent path traversal attacks
+        const sanitizedFilename = securityUtils.sanitizeFileName(file.filename);
+        const filename = `${dataSetNumber}_page${validatedPageNumber}_file${validatedFileIndex}_${sanitizedFilename}`;
+        // Validate URL to prevent SSRF attacks
+        const validatedUrl = securityUtils.validateUrl(file.url);
         const filePath = path_1.default.join(this.downloadDir, `data-set-${dataSetNumber}`, filename);
         // Create directory for this data set
         const dataSetDir = path_1.default.dirname(filePath);
